@@ -22,7 +22,7 @@ spec:
               name: tomcat-log
         - image: logstash
           name: logstash
-          args: ["-e input { file { path => \"/mnt/localhost_access_log.*\" } } output { stdout { codec => rubydebug } elasticsearch { hosts => [\"http://elasticsearch-svc.default.svc.cluster.local\"] } }"]
+          args: ["-e input { file { path => \"/mnt/localhost_access_log.*\" } } output { stdout { codec => rubydebug } elasticsearch { hosts => [\"http://elasticsearch-svc.default.svc.cluster.local:9200\"] } }"]
           volumeMounts:
             - mountPath: /mnt
               name: tomcat-log

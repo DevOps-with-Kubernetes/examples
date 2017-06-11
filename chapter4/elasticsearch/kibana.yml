@@ -1,0 +1,31 @@
+apiVersion: apps/v1beta1
+kind: Deployment
+metadata:
+  name: my-kibana
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: kibana-sel
+    spec:
+      containers:
+      - image: kibana:4
+        name: my-kibana
+        env:
+          - name: ELASTICSEARCH_URL
+            value: "http://elasticsearch-svc.default.svc.cluster.local:9200"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana-svc
+spec:
+  ports:
+  - name: http
+    nodePort: 30601
+    port: 5601
+    protocol: TCP
+  selector:
+    run: kibana-sel
+  type: NodePort
