@@ -32,8 +32,6 @@ kind: Service
 apiVersion: v1
 metadata:
   name: kiosk-service
-  labels:
-    tier: frontend
 spec:
   selector:
     tier: frontend

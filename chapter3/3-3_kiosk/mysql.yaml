@@ -22,10 +22,16 @@ spec:
         env:
         - name: MYSQL_ROOT_PASSWORD
           value: mysqlpass
+        - name: MYSQL_DATABASE
+          value: db
+        - name: MYSQL_USER
+          value: user
+        - name: MYSQL_PASSWORD
+          value: pass  
       volumes:
       - name: mysql-vol
         hostPath:
-          path: /data
+          path: /mysql/data
   minReadySeconds: 10
   strategy:
     type: RollingUpdate
@@ -37,8 +43,6 @@ kind: Service
 apiVersion: v1
 metadata:
   name: lmysql-service
-  labels:
-    tier: database
 spec:
   selector:
     tier: database
