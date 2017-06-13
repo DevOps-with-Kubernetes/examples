@@ -1,4 +1,5 @@
 import os
+from time import time
 from flask import Flask, request
 from flask_redis import FlaskRedis
 
