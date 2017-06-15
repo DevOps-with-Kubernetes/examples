@@ -1,15 +1,12 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: guaranteed-pod
+  name: burstable-pod
 spec:
   containers:
   - name: nginx
     image: nginx
     resources:
-      limits:
-        cpu: 0.3
-        memory: 350Mi
       requests:
-        cpu: 0.3
-        memory: 350Mi
+        cpu: 0.1
+        memory: 30Mi
