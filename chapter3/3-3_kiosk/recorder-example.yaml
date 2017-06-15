@@ -24,7 +24,10 @@ spec:
         - name: MYSQL_USER
           value: root
         - name: MYSQL_ROOT_PASSWORD
-          value: mysqlpass
+          valueFrom:
+            secretKeyRef:
+              name: mysql-root
+              key: password
   minReadySeconds: 3
   strategy:
     type: RollingUpdate
