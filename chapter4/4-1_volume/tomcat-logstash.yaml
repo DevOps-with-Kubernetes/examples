@@ -29,16 +29,3 @@ spec:
       volumes:
         - name: tomcat-log
           emptyDir: {}
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: tomcat
-spec:
-  ports:
-    - protocol: TCP
-      port: 8080
-      nodePort: 30088
-  type: NodePort
-  selector:
-     run: tomcat
