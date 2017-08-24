@@ -24,3 +24,8 @@ rules:
   - jobs
   - cronjobs
   verbs: ["*"]
+- apiGroups: ["batch"]
+  resources:
+  - jobs
+  - cronjobs
+  verbs: ["*"]
