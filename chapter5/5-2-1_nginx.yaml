@@ -1,12 +1,11 @@
-apiVersion: extensions/v1beta1
-kind: ReplicaSet
+apiVersion: apps/v1beta1
+kind: Deployment
 metadata:
   name: nginx
 spec:
   replicas: 2
   template:
     metadata:
-      name: nginx
       labels:
         project: chapter5
         service: nginx
@@ -16,7 +15,6 @@ spec:
         image: nginx
         ports:
         - containerPort: 80
-
 ---
 
 kind: Service
