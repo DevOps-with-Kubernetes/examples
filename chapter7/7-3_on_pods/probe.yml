@@ -17,16 +17,19 @@ spec:
         - -c
         - |
           echo "Pod is created at" $(date +%s)
-          sleep 7
+          sleep 6
           python -u app.py & PID=$!
-          sleep 16
+          sleep 17
           kill -15 $PID
           sleep 1
-          for i in 1 2 3; do
-            echo -e "HTTP/1.1 500" | nc -lp 5000 > /dev/null 2>&1
-            echo $(date +%s) fail#$i
+          i=0
+          while :; do
+            echo -e "HTTP/1.1 500" | nc -w 30 -lp 5000 > request 2>/dev/null
+            if [[ "$(cat request)" != "GET /from-tester" ]]; then
+              i=$((i+1))
+              echo $(date +%s) readiness test fail#$i
+            fi
           done
-          sleep 60
         readinessProbe:
           httpGet:
             path: /
@@ -36,4 +39,35 @@ spec:
           successThreshold: 2
           failureThreshold: 3 
           timeoutSeconds: 1
-  
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: my-app-svc
+  labels:
+    app: my-app
+spec:
+  selector:
+    app: my-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 5000
+      name: http
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: tester
+spec:
+  containers:
+  - name: main
+    image: busybox
+    command:
+    - /bin/sh
+    - -c
+    - |
+      while :; do
+        printf "$(date +%s) - $(echo -e "GET /from-tester" | nc -w 2 my-app-svc 80 2>&1)\n"
+        sleep 4
+      done
