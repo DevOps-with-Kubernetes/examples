@@ -1,7 +1,7 @@
-#apiVersion: extensions/v1beta1
+# default-deny all ingress traffics
 apiVersion: networking.k8s.io/v1
 kind: NetworkPolicy
 metadata:
   name: default-deny
 spec:
-  podSelector:
+  podSelector: {}

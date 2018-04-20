@@ -1,10 +1,14 @@
 # kiosk-example
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kiosk-example
 spec:
   replicas: 5
+  selector:
+    matchLabels:
+      tier: frontend
+      version: "3"
   template:
     metadata:
       labels:
