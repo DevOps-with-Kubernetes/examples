@@ -1,10 +1,14 @@
 # mysql
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: lmysql
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      tier: database
+      version: "5.7"
   template:
     metadata:
       labels:

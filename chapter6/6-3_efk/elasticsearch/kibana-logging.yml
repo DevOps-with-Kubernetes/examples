@@ -1,9 +1,12 @@
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: kibana-logging
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: kibana-logging
   template:
     metadata:
       labels:
@@ -31,4 +34,3 @@ spec:
   - port: 5601
   selector:
     app: kibana-logging
-

@@ -1,10 +1,14 @@
 # recorder-example
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: recorder-example
 spec:
   replicas: 3
+  selector:
+    matchLabels:
+      tier: backend
+      version: "3"
   template:
     metadata:
       labels:

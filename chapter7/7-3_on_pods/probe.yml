@@ -1,9 +1,12 @@
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: my-app
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: my-app
   template:
     metadata:
       labels:
@@ -37,7 +40,7 @@ spec:
           periodSeconds: 5
           initialDelaySeconds: 10
           successThreshold: 2
-          failureThreshold: 3 
+          failureThreshold: 3
           timeoutSeconds: 1
 ---
 kind: Service
