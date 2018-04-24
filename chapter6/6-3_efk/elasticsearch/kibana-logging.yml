@@ -13,7 +13,7 @@ spec:
         app: kibana-logging
     spec:
       containers:
-      - image: docker.elastic.co/kibana/kibana:5.5.1
+      - image: docker.elastic.co/kibana/kibana:6.2.4
         name: kibana-logging
         command:
         - /bin/bash
@@ -24,6 +24,13 @@ spec:
         env:
         - name: ELASTICSEARCH_URL
           value: "http://es-logging-svc:9200"
+        volumeMounts:
+        - name: config-file
+          mountPath: /usr/share/kibana/config
+      volumes:
+      - name: config-file
+        configMap:
+          name: kibana-config-file
 ---
 apiVersion: v1
 kind: Service

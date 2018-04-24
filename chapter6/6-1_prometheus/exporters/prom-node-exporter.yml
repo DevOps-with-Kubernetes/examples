@@ -21,11 +21,11 @@ spec:
       hostNetwork: true
       hostPID: true
       containers:
-      - image: quay.io/prometheus/node-exporter:v0.14.0
+      - image: quay.io/prometheus/node-exporter:v0.15.2
         name: node-exporter
         args:
-        - "-collector.procfs=/host/proc"
-        - "-collector.sysfs=/host/sys"
+        - "--path.procfs=/host/proc"
+        - "--path.sysfs=/host/sys"
         ports:
         - containerPort: 9100
           name: scrape-port
