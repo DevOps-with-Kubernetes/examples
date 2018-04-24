@@ -5,10 +5,12 @@ metadata:
   namespace: monitoring
   labels:
     app: grafana
+    job: grafana
+  annotations:
+    prometheus.io/scrape: 'true'
 spec:
   selector:
     app: grafana
-  type: ClusterIP
   ports:
   - name: grafana
     protocol: TCP
