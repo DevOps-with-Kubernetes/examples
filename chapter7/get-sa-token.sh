@@ -35,14 +35,10 @@ if [ -z "$NAMESPACE" ] || [ -z "$ACCOUNT_NAME" ]; then
 fi
 
 # get API endpoint of current cluster
-CURR_CXT=$(kubectl config current-context)
-CURR_CLUSTER=$(kubectl config view -o jsonpath={.contexts[?\(@.name==\"$CURR_CXT\"\)].context.cluster})
-API_ENDPOINT=$(kubectl config view -o jsonpath={.clusters[?\(@.name==\"$CURR_CLUSTER\"\)].cluster.server})
+API_ENDPOINT=$(kubectl config view --minify -o jsonpath={.clusters[].cluster.server})
 printf "API endpoint: \\n%s\\n" "$API_ENDPOINT"
 
 ACCOUNT_SECRET=$(kubectl get sa ${ACCOUNT_NAME} -n ${NAMESPACE} -o jsonpath="{.secrets[].name}")
-kubectl get secret ${ACCOUNT_SECRET} -n ${NAMESPACE} -o go-template='{{index .data "ca.crt"}}' | base64 --decode > ca.crt
-
-SERVICE_ACCOUNT_TOKEN_IN_K8S=$(kubectl get secret ${ACCOUNT_SECRET} -n ${NAMESPACE} -o jsonpath="{.data['token']}" | base64 --decode)
-echo "${SERVICE_ACCOUNT_TOKEN_IN_K8S}" > sa.token
+kubectl get secret ${ACCOUNT_SECRET} -n ${NAMESPACE} -o jsonpath="{.data['ca\.crt']}" | base64 --decode > ca.crt
+kubectl get secret ${ACCOUNT_SECRET} -n ${NAMESPACE} -o jsonpath="{.data['token']}" | base64 --decode > sa.token
 printf "ca.crt and sa.token exported\\n"
