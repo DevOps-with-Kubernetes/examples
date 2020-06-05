@@ -32,7 +32,7 @@ spec:
           name: prom-port
         resources:
           limits:
-            memory: 2Gi
+            memory: 1Gi
           requests:
             cpu: 200m
             memory: 1Gi
