@@ -1,4 +1,4 @@
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: prometheus
@@ -9,6 +9,9 @@ spec:
   replicas: 1
   strategy:
     type: Recreate
+  selector:
+    matchLabels:
+      app: prometheus
   template:
     metadata:
       labels:
@@ -16,13 +19,11 @@ spec:
     spec:
       serviceAccountName: prometheus
       containers:
-      - image: quay.io/prometheus/prometheus:v1.7.1
+      - image: quay.io/prometheus/prometheus:v2.18.1
         name: prom
         args:
-        - '-config.file=/prometheus-cfg/prometheus.yml'
-        - '-storage.local.path=/data'
-        - '-storage.local.retention=$(STORAGE_LOCAL_RETENTION)'
-        - '-storage.local.target-heap-size=$(STORAGE_LOCAL_TARGET_HEAP_SIZE)'
+        - '--config.file=/prometheus-cfg/prometheus.yml'
+        - '--storage.tsdb.path=/data'
         envFrom:
         - configMapRef:
             name: prometheus-config-flags
@@ -31,7 +32,7 @@ spec:
           name: prom-port
         resources:
           limits:
-            memory: 1Gi
+            memory: 2Gi
           requests:
             cpu: 200m
             memory: 1Gi

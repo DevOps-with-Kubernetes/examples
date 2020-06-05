@@ -53,7 +53,7 @@ data:
         - source_labels: [__meta_kubernetes_node_name]
           regex: (.+)
           target_label: __metrics_path__
-          replacement: /api/v1/nodes/${1}:4194/proxy/metrics
+          replacement: /api/v1/nodes/${1}/proxy/metrics/cadvisor
 
       - job_name: 'kubernetes-pods'
         kubernetes_sd_configs:
@@ -114,6 +114,10 @@ data:
       - job_name: 'kubernetes-services'
         kubernetes_sd_configs:
         - role: service
+        
+        metrics_path: /probe
+        params:
+          module: [http_2xx]
 
         relabel_configs:
         - source_labels: [__meta_kubernetes_service_annotation_prometheus_io_probe]
