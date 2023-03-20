@@ -2,7 +2,8 @@
 
 usage() {
   echo ""
-  echo "Export K8S cert and service account token"
+  echo "Export K8s cert and service account token"
+  echo "Disclaimer: This script only works for legacy tokens. For K8s 1.24+, use TokenRequest instead."
   echo "usage: $(basename "$0") -n <namespace> -a <service_account>"
   echo "  -n|--namespace The namespace of the service account"
   echo "  -a|--account   The service account to export"
@@ -36,13 +37,15 @@ fi
 
 # get API endpoint of current cluster
 CURR_CXT=$(kubectl config current-context)
-CURR_CLUSTER=$(kubectl config view -o jsonpath={.contexts[?\(@.name==\"$CURR_CXT\"\)].context.cluster})
-API_ENDPOINT=$(kubectl config view -o jsonpath={.clusters[?\(@.name==\"$CURR_CLUSTER\"\)].cluster.server})
-printf "API endpoint: \\n%s\\n" "$API_ENDPOINT"
+CURR_CLUSTER=$(kubectl config view -o jsonpath="{.contexts[?(@.name==\"$CURR_CXT\")].context.cluster}")
+API_ENDPOINT=$(kubectl config view -o jsonpath="{.clusters[?(@.name==\"$CURR_CLUSTER\")].cluster.server}")
+printf "API endpoint: \n%s\n" "$API_ENDPOINT"
 
-ACCOUNT_SECRET=$(kubectl get sa ${ACCOUNT_NAME} -n ${NAMESPACE} -o jsonpath="{.secrets[].name}")
-kubectl get secret ${ACCOUNT_SECRET} -n ${NAMESPACE} -o go-template='{{index .data "ca.crt"}}' | base64 --decode > ca.crt
+ACCOUNT_SECRET=$(kubectl get sa "${ACCOUNT_NAME}" -n "${NAMESPACE}" -o jsonpath="{.secrets[].name}")
+test -z "$ACCOUNT_SECRET" && echo "Warning: no Secrets found, it's likely the legacy token is disabled for this cluster." && exit
 
-SERVICE_ACCOUNT_TOKEN_IN_K8S=$(kubectl get secret ${ACCOUNT_SECRET} -n ${NAMESPACE} -o jsonpath="{.data['token']}" | base64 --decode)
+kubectl get secret "${ACCOUNT_SECRET}" -n "${NAMESPACE}" -o go-template='{{index .data "ca.crt"}}' | base64 --decode > ca.crt
+
+SERVICE_ACCOUNT_TOKEN_IN_K8S=$(kubectl get secret "${ACCOUNT_SECRET}" -n "${NAMESPACE}" -o jsonpath="{.data['token']}" | base64 --decode)
 echo "${SERVICE_ACCOUNT_TOKEN_IN_K8S}" > sa.token
-printf "ca.crt and sa.token exported\\n"
+printf "ca.crt and sa.token exported\n"
